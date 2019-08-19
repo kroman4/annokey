@@ -145,8 +145,12 @@ def get_gene_records(args, gene_name):
     if args.online:
         gene_ids = get_gene_ids(args, gene_name)
         for gene_id in gene_ids:
-            gene_records_xml = fetch_records_from_ids(gene_ids)
-            yield gene_id, gene_records_xml
+            try:
+                gene_records_xml = fetch_records_from_ids(gene_ids)
+                yield gene_id, gene_records_xml
+            except AttributeError as exception:
+                logging.warn("Cannot get gene records for gene {}: {}".
+                             format(gene_name, exception))           
     else:
         for gene_db_id, gene_file_path in \
             lookup_gene_cache_iter(args, gene_name):
